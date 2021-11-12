@@ -8,7 +8,7 @@
 
 #### How to show us your results:
 1. Push your results to your public repo
-2. Give access to maurice@proxify.io and vlad@proxify.io
+2. Give access to viktar.sarachuk@proxify.io and julia@proxify.io
 
 #### What you should show us:
 1. Clean and readable code
