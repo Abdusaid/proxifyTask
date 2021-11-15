@@ -30,11 +30,13 @@ Your task is to fix the broken chatbot and write as many features properly as yo
 2. Show each of your message in a blue bubble **`class="me"`** and the chatbot messages in a gray bubble **`class="him"`**.
 3. At the start of a new chat (example: reloading the site), the button message should write: Let's chat, after that the text changes to: Send Message.
 4. After the chat ends, you should disable the button.
-5. Try to refactor and clean up the code as much as possible.
+5. Scroll always to the last message
+6. Try to refactor and clean up the code as much as possible.
 
 #### 🔥 Bonus:
 1. Load the messages via **Axios** from a json file
 2. Use **Vue Composition API**
-3. Be creative and add nice features
-4. Add vue-typed-js for type animations
-5. Scroll always to the last message
+3. Send message on the "Enter" key press
+4. Add delays between the chatbot's responses
+5. Be creative and add nice features
+
