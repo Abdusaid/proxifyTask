@@ -2,50 +2,53 @@
   <main>
     <div>
       <ul
-        id="chatScreen"
-        :style="chatScreenStyle"
+        id = "chatScreen"
+        :style = "chatScreenStyle"
       >
         <li
-          v-for="(message, index) in messages.slice(0, next)"
-          v-bind:key="index"
-          :class="message.owner"
-        >
-          {{ message.text }}
+          v-for ="(message, index) in messages.slice(0, next)"
+          :key = "index"
+          :class = "message.owner"
+          v-text = "message.text"
+        > 
         </li>
       </ul>
     </div>
-    <div class="input-area">
+
+    <div class = "input-area">
       <textarea 
-        :placeholder="textareaMsg" 
-        @keyup.enter="sendWithEnter" 
-        v-model.trim="input"></textarea>
+        :placeholder = "textareaMsg" 
+        @keyup.enter = "sendWithEnter" 
+        v-model.trim = "input">
+      </textarea>
       <button
-        :style="sendBtnStyle"
-        @click="send"
-        :disabled="isDisabled"
+        :style = "sendBtnStyle"
+        @click = "send"
+        :disabled = "isDisabled"
+        v-text = "sendBtnText"
       >
-        Send Message
       </button>
     </div>
+
   </main>
 </template>
 
 <script>
-//import axios from 'axios'
+import axios from 'axios'
+import CustomFunctionsMixins from '@/mixins/customFunctions'
 export default {
   name: "App",
-  components: {},
+  mixins:[CustomFunctionsMixins],
   data: () => ({
-    name: "",
-    age: 0,
-    location: "",
-    feeling: "",
-    hobby: "",
-    next: 0,
-    input: "",
-    toChat: [],
-    textareaMsg: "Let's chat",
+    userResponses:{
+      name: "",
+      age: 0,
+      location: "",
+      feeling: "",
+      hobby: "",
+    },
     isDisabled: true,
+    sendBtnText: "Send Message",
     chatScreenStyle: {
       listStyle: 'none',
       margin: 0,
@@ -66,48 +69,7 @@ export default {
       border: 'none',
       fontSize: '16px',
     },
-    messages: [
-      {
-        text: "Hi, I'm Peter!",
-        owner: "him",
-      },
-      {
-        text: "What's your name?",
-        ask: "name",
-        owner: "him",
-      },
-      {
-        text: "Nice to meet you!",
-        owner: "him",
-      },
-      {
-        text: "How was your day?",
-        ask: "feeling",
-        owner: "him",
-      },
-      {
-        text: "Where're you from?",
-        ask: "location",
-        owner: "him",
-      },
-      {
-        text: "Nice!",
-        owner: "him",
-      },
-      {
-        text: "How old are you?",
-        ask: "age",
-        owner: "him",
-      },
-      {
-        text: "What's your favorite hobby?",
-        ask: "hobby",
-        owner: "him",
-      },
-      {
-        text: "Wow, cool",
-      },
-    ],
+    messages:""
   }),
   computed:{
     messagingFlag(){
@@ -136,41 +98,61 @@ export default {
       }
     },
     send(){
-      this.scrollToBottom()
       this.messages.splice(this.next, 0, {
         text: this.input,
         owner: "me",
       });
       
       while(this.messages[this.next]?.owner && this.messages[this.next]?.ask === undefined){
-        this.next += 1;
+        this.showNext()
       }
-      //delay for bot typing
-      setTimeout(()=>{this.next += 1},500) 
-      this.modifyTextareaMsg()
-      this.scrollToBottom()
-      
-    },
+      // this.showNext()
 
-    modifyTextareaMsg(){
-      this.input = ""
-      this.textareaMsg = "Send Message"
+      //delay for bot typing
+      setTimeout(() => {
+          this.showNext()
+          this.nextTick()
+        }, 500) 
+        
+      this.modifyTextareaMsg()
+      this.getUserResponse(this.next)
+      this.nextTick()
     },
-    scrollToBottom(){
-      let chatScreen = this.$el.querySelector("#chatScreen")
-      chatScreen.scrollTo({
-        top: 900,
-        left: 0,
-        behavior: 'smooth'
-      });
+    nextTick(){
+      this.$nextTick(() => {
+        this.scrollToBottom()
+      })
+    },
+    getUserResponse(response_id){
+      if(response_id == 5){
+        this.userResponses.name = this.messages[response_id-2].text
+      }else if(response_id == 7){
+        this.userResponses.feeling = this.messages[response_id-1].text
+      }else if(response_id == 10){
+        this.userResponses.location = this.messages[response_id-2].text
+      }else if(response_id == 12){
+        this.userResponses.age = this.messages[response_id-1].text
+      }else if(response_id == 14){
+        this.userResponses.hobby = this.messages[response_id-1].text
+        
+        this.messages.splice(this.messages.length, 0, {
+          text: `Thank you ${this.userResponses.name} for your messages! 
+                 I am very happy for you that, on your ${this.userResponses.age} years 
+                 possessing ${this.userResponses.hobby} as hobby and it is exciting! \uD83D\uDE00`,
+          owner: "him",
+        });
+        this.showNext()
+      }
     }
   },
-  /*mounted(){
+  mounted(){
     axios.get('data.json').then((response) => {
-    console.log(response.data)
-})
-  }*/
-};
+      this.messages = [...response.data.messages]
+    })
+  }
+}
+
+
 </script>
 
 <style>
